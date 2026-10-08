@@ -1,0 +1,57 @@
+/* Import font 'Inter' untuk kesan modern dan bersih ala Cloud Dashboard */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    background-color: #f8f9fa; /* Latar belakang abu-abu sangat terang */
+}
+
+/* Kustomisasi Kartu (Cards) */
+.card {
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important; /* Border tipis dan elegan */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efek elevasi (melayang) saat kursor diarahkan ke kartu KPI */
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08) !important;
+}
+
+/* Kustomisasi Header Kartu */
+.card-header {
+    border-bottom: 1px solid #e2e8f0 !important;
+    background-color: #ffffff !important;
+    font-size: 0.95rem;
+    letter-spacing: 0.2px;
+}
+
+/* Kustomisasi Teks */
+h3 {
+    letter-spacing: -0.5px;
+    font-weight: 700 !important;
+}
+
+.text-small {
+    font-size: 0.85rem;
+}
+
+/* Kustomisasi Tabel Parameter Sistem */
+.table th {
+    font-weight: 600;
+    color: #64748b !important;
+    padding-left: 0 !important;
+}
+
+.table td {
+    color: #0f172a !important;
+    text-align: right;
+    padding-right: 0 !important;
+}
+
+/* Menghilangkan border default dari Dash/Plotly pada grafik saat di-klik */
+.dash-graph:focus {
+    outline: none !important;
+}

@@ -1,0 +1,60 @@
+version: '3.8'
+
+# Run with 'docker-compose up -d' to start the services in detached mode. 
+# 'docker ps' to check running containers. 'docker-compose down' to stop and remove containers, networks, and volumes.
+# 'docker-compose down' removes the containers, networks, and volumes defined in this file. Use with caution as it will delete all data in the volumes.
+# 'docker-compose stop' stops the containers without removing them, allowing you to restart them later with 'docker-compose start'.
+# 'docker-compose up -d --build' to rebuild the images and start the services in detached mode.
+# 'docker-compose up -d --force-recreate mlflow' to recreate the mlflow service without affecting other services.
+services:
+  # 1. PostgreSQL
+  postgres:
+    image: postgres:15
+    container_name: fraud_postgres
+    environment:
+      POSTGRES_USER: mlflow_user
+      POSTGRES_PASSWORD: mlflow_password
+      POSTGRES_DB: mlflow_registry
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # 2. MLflow Server
+  mlflow:
+    image: python:3.10-slim
+    container_name: fraud_mlflow
+    ports:
+      - "5000:5000"
+    command: >
+      bash -c "pip install mlflow psycopg2-binary &&
+      mlflow server
+      --backend-store-uri postgresql://mlflow_user:mlflow_password@postgres:5432/mlflow_registry
+      --serve-artifacts
+      --artifacts-destination /mlflow/artifacts
+      --default-artifact-root mlflow-artifacts:/
+      --host 0.0.0.0 --port 5000"
+    volumes:
+      - ./mlruns:/mlflow/artifacts
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+
+  # 3. JupyterLab
+  jupyter:
+    image: jupyter/scipy-notebook:python-3.10
+    container_name: fraud_jupyter
+    ports:
+      - "8888:8888"
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - JUPYTER_ENABLE_LAB=yes
+    volumes:
+      - .:/home/jovyan/work
+    depends_on:
+      - mlflow
+
+volumes:
+  postgres_data:

@@ -1,0 +1,13 @@
+dash 
+dash-bootstrap-components 
+plotly 
+pandas
+python-dotenv 
+groq
+langchain 
+langchain-groq 
+langchain-huggingface 
+langchain-community 
+pypdf 
+chromadb 
+sentence-transformers
