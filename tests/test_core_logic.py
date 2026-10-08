@@ -30,7 +30,7 @@ class TestSpatialFeatures:
     """Test suite untuk memvalidasi algoritma ekstraksi fitur geospasial."""
     
     @pytest.mark.parametrize("coord, expected_distance", [
-        ((-6.2088, 106.8456, -6.9175, 107.6191), 119.0),  # Jakarta ke Bandung (~119 km)
+        ((-6.2088, 106.8456, -6.9175, 107.6191), 116.24),  # Jakarta ke Bandung (~116.24 km)
         ((33.9659, -80.9355, 33.9863, -81.2007), 24.6),   # Jarak aktual fraudTest.csv baris pertama
         ((-6.2088, 106.8456, -6.2088, 106.8456), 0.0),    # Transaksi di koordinat yang persis sama
     ])
