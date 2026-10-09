@@ -1,150 +1,189 @@
-# Fraud Analytics System: User Manual & Operations Guide
+# User Manual & Operations Guide: Risk System
 
-This guide provides comprehensive instructions for configuring, running, and utilizing the **Fraud Analytics System**. This system includes a Machine Learning API, an interactive Business Dashboard, a RAG-based AI Copilot, and Power BI Data Export capabilities.
+This guide explains how to configure, run, and use the **Risk Fraud Analytics System**. The system consists of a Machine Learning API microservice, an interactive business dashboard, a RAG-based AI Copilot, and Power BI data export.
+
+## Table of Contents
+
+1. [Prerequisites](#1-prerequisites)
+2. [Environment Configuration](#2-environment-configuration)
+3. [Building the Knowledge Base (ChromaDB)](#3-building-the-knowledge-base-chromadb)
+4. [Execution Method A: Docker Compose](#4-execution-method-a-docker-compose)
+5. [Execution Method B: Local Development](#5-execution-method-b-local-development)
+6. [Exporting Data for Power BI](#6-exporting-data-for-power-bi)
+7. [Troubleshooting](#7-troubleshooting)
 
 ---
 
-## 1. Environment Setup (Prerequisites)
+## 1. Prerequisites
 
-Before running any components, ensure you have set up your virtual environment and environment variables.
+| Requirement | Details | Needed for |
+| --- | --- | --- |
+| **Python 3.10+** | Application runtime | Local development, knowledge base build |
+| **Git** | Cloning the repository | All modes |
+| **Docker & Docker Compose** | Containerized deployment | Docker mode only |
 
-### 1.1 Install Global Dependencies
+---
 
-Ensure you are in the project's root directory (`credit-card-fraud-ml/`) and run:
+## 2. Environment Configuration
+
+The system uses a `.env` file for secrets management, API authentication, and AI telemetry. Create it in the **root directory** (alongside `README.md`):
+
+```env
+# 1. AI Copilot (Groq API)
+GROQ_API_KEY=your_groq_api_key_here
+
+# 2. FastAPI Security (JWT authentication)
+API_SECRET_KEY=your_secure_jwt_secret_key
+
+# 3. Model Registry (MLOps)
+MLFLOW_TRACKING_URI=http://localhost:5000
+
+# 4. LangSmith Telemetry (RAG monitoring, optional)
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
+LANGCHAIN_API_KEY=your_langsmith_api_key
+LANGCHAIN_PROJECT=Risk_Production
+```
+
+> **Security:** Never commit `.env`. Make sure it is listed in `.gitignore`.
+
+---
+
+## 3. Building the Knowledge Base (ChromaDB)
+
+The AI Copilot needs a local vector database to answer operational queries based on compliance documents. **Run this step once locally**, regardless of whether you later use Docker or manual execution.
+
+1. Place your reference PDFs in the `knowledge_base/` folder.
+2. Install the dashboard dependencies:
 
 ```bash
+   pip install -r dashboard/06_Dashboard/requirements.txt
+```
+
+3. Run the vector database builder:
+
+```bash
+   cd dashboard/06_Dashboard/core/
+   python build_vector_db.py
+   cd ../../../
+```
+
+4. Verify that a `chroma_db/` directory now exists in the project root.
+
+> Re-run this step whenever you add new documents to `knowledge_base/`.
+
+---
+
+## 4. Execution Method A: Docker Compose
+
+Recommended for a clean, isolated, production-like deployment. It runs the backend API and the frontend dashboard together in containers.
+
+### 4.1. Launch the System
+
+From the root directory:
+
+```bash
+docker compose up -d --build
+```
+
+> On older Docker versions, use `docker-compose` instead of `docker compose`.
+
+### 4.2. Access the Services
+
+| Service | URL |
+| --- | --- |
+| **Operational Dashboard** | http://localhost:8050 |
+| **Inference API (Swagger UI)** | http://localhost:8000/docs |
+
+### 4.3. Manage the Containers
+
+| Goal |  |
+| --- | --- |
+| View live logs | `docker compose logs -f` |
+| Stop without removing containers | `docker compose stop` |
+| Start again after stopping | `docker compose start` |
+| Remove containers and networks | `docker compose down` |
+
+---
+
+## 5. Execution Method B: Local Development
+
+Use this method when you are actively modifying the code and need hot-reloading. **Open three separate terminals** so the services run concurrently.
+
+### 5.1. Install Dependencies
+
+From the root directory:
+
+```bash
+pip install -r dashboard/05_Model_Serving/requirements.txt
 pip install -r dashboard/06_Dashboard/requirements.txt
 ```
 
-> **Note:** You can also install dependencies per module inside their respective folders.
+### 5.2. Terminal 1: MLflow Model Registry
 
-### 1.2 Configure API Keys & Environment Variables
-
-Create a file named `.env` in the root directory (alongside the `README.md` file). Add the following credentials:
-
-```env
-# LLM Access for the AI Copilot (Required)
-GROQ_API_KEY=your_groq_api_key_here
-
-# MLflow Tracking URI (Optional, only needed if fetching live training metrics)
-MLFLOW_TRACKING_URI=http://localhost:5000
-```
-
----
-
-## 2. Building the Knowledge Base for AI Copilot (RAG)
-
-The AI Copilot requires a local Vector Database (ChromaDB) to answer questions based on internal SOPs and banking regulations. This setup only needs to be executed **once** (or whenever new PDF documents are added).
-
-### 2.1 Place Reference Documents
-
-Place your reference documents (e.g., Compliance Regulations, Investigation SOPs, Dispute Guidelines) into the `knowledge_base/` folder.
-
-### 2.2 Run the Vector Database Builder
-
-Run the following commands:
+Starts the tracking server so the system can fetch the latest model artifacts.
 
 ```bash
-cd dashboard/06_Dashboard/core/
-python build_vector_db.py
+# Run from the root directory
+mlflow server --host 127.0.0.1 --port 5000
 ```
 
-### 2.3 Wait for the Embedding Process
+### 5.3. Terminal 2: FastAPI Inference Engine
 
-Wait for the embedding process to complete. A new folder named `chroma_db` will be generated in the root repository.
+Starts the backend prediction microservice.
 
----
+```bash
+# Run from the root directory
+uvicorn dashboard.05_Model_Serving.app:app --host 0.0.0.0 --port 8000 --reload
+```
 
-## 3. Running the Fraud Analytics Dashboard
+API documentation: http://localhost:8000/docs
 
-The dashboard serves as the primary interface for analysts and executives. It is built with Dash (Python) using a standard MVC (Model-View-Controller) architecture.
+### 5.4. Terminal 3: Dash Operational Dashboard
 
-### 3.1 Navigate to the Dashboard Directory
-
-Open your terminal and navigate to the dashboard directory:
+Starts the frontend. Run it from inside its own directory so static assets (CSS and images) load correctly.
 
 ```bash
 cd dashboard/06_Dashboard/
-```
-
-### 3.2 Launch the Application
-
-Run:
-
-```bash
 python app.py
 ```
 
-### 3.3 Access the Dashboard
-
-Open your web browser and navigate to:
-
-**`http://localhost:8050`**
-
-### Dashboard Navigation Guide
-
-* **Executive Summary:** Displays C-level metrics such as Total Processed Value (TPV), Net Savings (ROI), Customer Friction Rate, and monthly financial impact. Designed for management reporting.
-* **Operations Monitor:** Displays a geospatial anomaly map (Haversine distance), temporal trends, and a real-time **Investigation Queue**. Designed for daily fraud operations monitoring.
-* **Model Performance:** Displays MLOps technical metrics, the Confusion Matrix, and Explainable AI (SHAP) feature importance for algorithmic transparency audits.
-* **AI Copilot:** An intelligent assistant that answers questions regarding live operational metrics and fraud handling procedures based on the documents stored in the `knowledge_base/` folder.
+Dashboard: http://localhost:8050
 
 ---
 
-## 4. Exporting Data for Power BI (Data Mart)
+## 6. Exporting Data for Power BI
 
-To create advanced reports using Power BI, you need to export the processed model predictions (flat table format).
+To generate management reports, export the model predictions into a flat table (Data Mart).
 
-### 4.1 Run the Export Script
-
-Open your terminal in the root project directory.
-
-Run the export script:
+1. Open a terminal in the project root.
+2. Run the exporter:
 
 ```bash
-python report/export_powerbi.py
+   python report/export_powerbi.py
 ```
 
-### 4.2 Output
-
-The system will process the operational data, append Confusion Matrix labels (TP, FP, FN, TN), and save it to:
-
-`dataset/03_powerbi/powerbi_fraud_mart.csv`
-
-### 4.3 Load Data into Power BI
-
-Open **Power BI Desktop**, select *Get Data -> Text/CSV*, and load the generated file. You can save your final `.pbix` file inside the `report/` folder.
+3. The script writes the output to `dataset/03_powerbi/powerbi_fraud_mart.csv`.
+4. Open Power BI Desktop (or `report/Fraud_Analytics_Report.pbix`), load the CSV, and map it to your visuals.
 
 ---
 
-## 5. Running the Model Serving API (Optional)
+## 7. Troubleshooting
 
-If you need to test the REST API endpoint for real-time predictions (typically connected to a Payment Gateway):
-
-### 5.1 Navigate to the Model Serving Folder
-
-```bash
-cd dashboard/05_Model_Serving/
-```
-
-### 5.2 Run the FastAPI Server
-
-```bash
-uvicorn app:app --host 0.0.0.0 --port 8000 --reload
-```
-
-### 5.3 Access Swagger UI
-
-Access the interactive Swagger UI documentation at:
-
-**`http://localhost:8000/docs`**
+| Issue | Resolution |
+| --- | --- |
+| **`ImportError: cannot import name 'TransactionInput'`** | Run the `uvicorn`  from the **root directory** as shown in Section 5.3, not from inside the `05_Model_Serving` folder. |
+| **Error 400 (message length) on AI Copilot** | Make sure the Groq model set in `ai_assistant.py` supports a large context window (for example `llama-3.1-8b-instant`). Do not use prompt-guard models for RAG. |
+| **Cannot fetch MLflow model metadata** | Verify that Terminal 1 (`mlflow server`) is running on port 5000. If it is unavailable, the dashboard falls back to default metrics. |
+| **`401 Unauthorized` on the API** | The `/predict_risk` endpoint is secured by JWT. Make sure your API client (for example Postman) sends a Bearer token generated with your `API_SECRET_KEY`. |
+| **ChromaDB SQLite3 error** | If you see an outdated `pysqlite3` version error, delete the `chroma_db/` folder, run `pip install --upgrade chromadb`, then rebuild the knowledge base (Section 3). |
 
 ---
 
-## Troubleshooting
+<div align="center">
 
-| Error / Issue                                  | Solution                                                                                                                                                             |
-| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Error 400 (Length Messages) on AI Copilot**  | Ensure you are using an LLM with a large context window (e.g., `llama-3.1-8b-instant` or `mixtral-8x7b-32768`) in `ai_assistant.py`, **not** a `prompt-guard` model. |
-| **Cannot fetch MLflow model metadata**         | Ensure your local MLflow server is running (`mlflow ui`) on port 5000. Otherwise, the dashboard will gracefully fallback to default metrics.                         |
-| **ModuleNotFoundError during Power BI export** | Ensure you are running `python report/export_powerbi.py` directly from the project root directory, not from inside the `report/` folder.                             |
-| **ChromaDB Error (sqlite3)**                   | This occurs if the system `pysqlite3` version is outdated. Delete the `chroma_db/` folder and reinstall dependencies using `pip install --upgrade chromadb`.         |
+**Risk: Enterprise Fraud Analytics & Intelligence System**
+
+© 2026 Bayu Ardiyansyah
+
+</div>
