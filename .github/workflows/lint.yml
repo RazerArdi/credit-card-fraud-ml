@@ -16,8 +16,8 @@ jobs:
     - name: Install Quality Assurance Tools
       run: |
         pip install flake8 black mypy
-        pip install -r dashboard/05_Model_Serving/requirements.txt
-        pip install -r dashboard/06_Dashboard/requirements.txt
+        pip install -r dashboard/Model_Serving/requirements.txt
+        pip install -r dashboard/Dashboard/requirements.txt
         
     - name: Run Black (Formatting Check)
       run: black --check dashboard/ tests/

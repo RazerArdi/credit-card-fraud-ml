@@ -24,13 +24,13 @@ jobs:
     - name: Build and Push Dash Dashboard
       uses: docker/build-push-action@v5
       with:
-        context: ./dashboard/06_Dashboard
+        context: ./dashboard/Dashboard
         push: true
         tags: ghcr.io/razerardi/credit-card-fraud-ml/risk-dashboard:latest
 
     - name: Build and Push FastAPI Serving
       uses: docker/build-push-action@v5
       with:
-        context: ./dashboard/05_Model_Serving
+        context: ./dashboard/Model_Serving
         push: true
         tags: ghcr.io/razerardi/credit-card-fraud-ml/risk-dashboard-api:latest
