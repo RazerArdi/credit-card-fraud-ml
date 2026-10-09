@@ -33,7 +33,7 @@ def get_ai_response(user_message: str, chat_history: list, kpi_context: dict) ->
 
     # Inisialisasi LLM
     llm = ChatGroq(
-        api_key=SecretStr(api_key),
+        api_key=SecretStr(api_key),  # type: ignore[arg-type]
         model="openai/gpt-oss-120b",
         temperature=0.1,
         stop_sequences=None,
