@@ -33,10 +33,10 @@ def get_ai_response(user_message: str, chat_history: list, kpi_context: dict) ->
 
     # Inisialisasi LLM
     llm = ChatGroq(
-        api_key=SecretStr(api_key), 
-        model="openai/gpt-oss-120b", 
+        api_key=SecretStr(api_key),
+        model="openai/gpt-oss-120b",
         temperature=0.1,
-        stop_sequences=None
+        stop_sequences=None,
     )
 
     # Langkah A: Melakukan pencarian dokumen berdasarkan pertanyaan pengguna
