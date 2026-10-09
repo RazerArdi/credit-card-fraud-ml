@@ -5,6 +5,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
 from typing import Any
+from pydantic import SecretStr
 
 # 1. Konfigurasi Database Vektor
 BASE_DIR = os.path.dirname(
@@ -31,12 +32,17 @@ def get_ai_response(user_message: str, chat_history: list, kpi_context: dict) ->
         return "Sistem Error: GROQ_API_KEY tidak ditemukan di file .env."
 
     # Inisialisasi LLM
-    llm = ChatGroq(api_key=api_key, model="openai/gpt-oss-120b", temperature=0.1)
+    llm = ChatGroq(
+        api_key=SecretStr(api_key), 
+        model="openai/gpt-oss-120b", 
+        temperature=0.1,
+        stop_sequences=None
+    )
 
     # Langkah A: Melakukan pencarian dokumen berdasarkan pertanyaan pengguna
     docs = retriever.invoke(user_message)
 
-    # Merangkai dokumen yang ditemukan menjadi sebuah konteks teks
+    # Merangkai dokumen yang ditemukan menjadi sebuah teks
     if docs:
         retrieved_context = "\n\n".join(
             [
@@ -49,7 +55,7 @@ def get_ai_response(user_message: str, chat_history: list, kpi_context: dict) ->
             "Tidak ada referensi dokumen yang relevan ditemukan di Knowledge Base."
         )
 
-    # Langkah B: Mempersiapkan konteks Metrik Operasional
+    # Langkah B: Mempersiapkan Metrik Operasional
     kpi_summary = f"""
     - Total Transaksi: {kpi_context['total_trx']:,}
     - Total Nilai Diproses (TPV): ${kpi_context['total_value']:,.2f}
