@@ -152,7 +152,7 @@ def render(df: pd.DataFrame, meta: dict):
                                 ),
                                 dbc.CardBody(
                                     [
-                                        dash_table.DataTable(
+                                        dash_table.DataTable( # type: ignore
                                             data=alert_df.to_dict("records"),
                                             columns=[
                                                 {"name": i, "id": i}

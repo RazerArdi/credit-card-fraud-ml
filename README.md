@@ -194,15 +194,15 @@ Laporan intelijen bisnis tersedia dalam format [`Fraud_Analytics_Report.pbix`](r
   <tr>
     <td align="center" width="33%">
       <img src="report/image/PowerBI/Fraud_Analytics_Report_Page1.jpg" alt="Power BI Page 1" width="280"/>
-      <br/><sub>Halaman 1</sub>
+      <br/><sub>Executive Summary</sub>
     </td>
     <td align="center" width="33%">
       <img src="report/image/PowerBI/Fraud_Analytics_Report_Page2.jpg" alt="Power BI Page 2" width="280"/>
-      <br/><sub>Halaman 2</sub>
+      <br/><sub>Risk Profiling & Demographics</sub>
     </td>
     <td align="center" width="33%">
       <img src="report/image/PowerBI/Fraud_Analytics_Report_Page3.jpg" alt="Power BI Page 3" width="280"/>
-      <br/><sub>Halaman 3</sub>
+      <br/><sub>ML Operational Performance</sub>
     </td>
   </tr>
 </table>

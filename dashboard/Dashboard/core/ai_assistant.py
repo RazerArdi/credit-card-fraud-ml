@@ -4,6 +4,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
+from typing import Any
 
 # 1. Konfigurasi Database Vektor
 BASE_DIR = os.path.dirname(
@@ -13,7 +14,7 @@ CHROMA_DB_DIR = os.path.join(BASE_DIR, "chroma_db")
 
 print("Memuat Model Embedding dan Vector Database untuk RAG...")
 # Memuat model embedding yang sama dengan saat ingestion
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+embeddings = HuggingFaceEmbeddings(model="all-MiniLM-L6-v2")
 
 # Menghubungkan ke ChromaDB yang sudah kita buat sebelumnya
 vector_store = Chroma(persist_directory=CHROMA_DB_DIR, embedding_function=embeddings)
@@ -30,7 +31,7 @@ def get_ai_response(user_message: str, chat_history: list, kpi_context: dict) ->
         return "Sistem Error: GROQ_API_KEY tidak ditemukan di file .env."
 
     # Inisialisasi LLM
-    llm = ChatGroq(api_key=api_key, model_name="openai/gpt-oss-120b", temperature=0.1)
+    llm = ChatGroq(api_key=api_key, model="openai/gpt-oss-120b", temperature=0.1)
 
     # Langkah A: Melakukan pencarian dokumen berdasarkan pertanyaan pengguna
     docs = retriever.invoke(user_message)
@@ -87,7 +88,7 @@ def get_ai_response(user_message: str, chat_history: list, kpi_context: dict) ->
     )
 
     # Langkah D: Memformat riwayat percakapan untuk LangChain
-    formatted_history = []
+    formatted_history: list[Any] = []
     for msg in chat_history:
         if msg["role"] == "user":
             formatted_history.append(HumanMessage(content=msg["content"]))
@@ -106,6 +107,6 @@ def get_ai_response(user_message: str, chat_history: list, kpi_context: dict) ->
                 "question": user_message,
             }
         )
-        return response.content
+        return str(response.content)
     except Exception as e:
         return f"Terjadi kesalahan saat menghubungi layanan AI: {str(e)}"
