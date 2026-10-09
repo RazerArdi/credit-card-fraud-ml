@@ -1,6 +1,6 @@
-# System Architecture: RiskCommand Fraud Analytics System
+# System Architecture: Risk Fraud Analytics System
 
-This document outlines the architectural design, component interactions, and technology stack of **RiskCommand, the Enterprise Fraud Analytics & Intelligence System**. The system is an end-to-end enterprise solution that integrates predictive machine learning, real-time operational monitoring, Retrieval-Augmented Generation (RAG) AI, and Business Intelligence reporting.
+This document outlines the architectural design, component interactions, and technology stack of **Risk, the Enterprise Fraud Analytics & Intelligence System**. The system is an end-to-end enterprise solution that integrates predictive machine learning, real-time operational monitoring, Retrieval-Augmented Generation (RAG) AI, and Business Intelligence reporting.
 
 ## Table of Contents
 

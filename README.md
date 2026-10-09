@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="report/image/Logo_NoBackGround.png" alt="RiskCommand Logo" width="300"/>
+  <img src="report/image/Logo_NoBackGround.png" alt="Risk Logo" width="300"/>
 
-# Enterprise Fraud Analytics & Intelligence System (RiskCommand)
+# Enterprise Fraud Analytics & Intelligence System (Risk)
 
 **Sistem Deteksi Penipuan Kartu Kredit Terintegrasi dengan Machine Learning (LightGBM), MLOps, dan Retrieval-Augmented Generation (RAG) AI.**
 
@@ -17,7 +17,7 @@
 
 ## Ringkasan Proyek
 
-RiskCommand adalah platform intelijen prediktif yang dirancang untuk memitigasi kerugian finansial akibat transaksi kartu kredit yang tidak sah. Sistem ini memproses data logistik dan transaksi mentah menjadi metrik operasional, memungkinkan transisi dari mesin berbasis aturan (rule-based) yang statis menuju manajemen risiko berbasis model probabilitas.
+Risk adalah platform intelijen prediktif yang dirancang untuk memitigasi kerugian finansial akibat transaksi kartu kredit yang tidak sah. Sistem ini memproses data logistik dan transaksi mentah menjadi metrik operasional, memungkinkan transisi dari mesin berbasis aturan (rule-based) yang statis menuju manajemen risiko berbasis model probabilitas.
 
 Platform ini memfasilitasi tiga pemangku kepentingan utama: visualisasi dampak finansial (Net Savings dan ROI) untuk level eksekutif, pemantauan anomali geospasial real-time untuk tim operasional, dan transparansi algoritma (Explainable AI) untuk tim audit dan data science.
 
@@ -42,7 +42,7 @@ Diagram berikut menunjukkan bagaimana sistem memberikan nilai bisnis, mulai dari
 
 ```mermaid
 flowchart LR
-    A[Transaksi Kartu Kredit] --> B{RiskCommand Engine}
+    A[Transaksi Kartu Kredit] --> B{Risk Engine}
     B -->|Risiko Rendah| C[Transaksi Disetujui]
     B -->|Risiko Tinggi| D[Peringatan & Penahanan]
 
@@ -300,7 +300,7 @@ MLFLOW_TRACKING_URI=http://localhost:5000
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
 LANGCHAIN_API_KEY=masukkan_kunci_api_langsmith_anda
-LANGCHAIN_PROJECT=RiskCommand_Production
+LANGCHAIN_PROJECT=Risk_Production
 ```
 
 > Jangan commit file `.env`. Pastikan sudah masuk `.gitignore`.
