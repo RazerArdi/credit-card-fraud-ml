@@ -44,7 +44,7 @@ def verify_jwt(credentials: HTTPAuthorizationCredentials = Depends(security)):
 mlflow.set_tracking_uri("http://localhost:5000")
 
 MODEL_NAME = "Risk_LGBM_Production"
-MODEL_VERSION = 1
+MODEL_VERSION = 5
 MODEL_URI = f"models:/{MODEL_NAME}/{MODEL_VERSION}"
 
 print(f"Memuat model dari {MODEL_URI}...")

@@ -1,4 +1,4 @@
-artifact_path: mlflow-artifacts:/1/models/m-60d985fd88d345859658640cc6e88f31/artifacts
+artifact_path: /mnt/d/PROJECT/Portofolio/credit-card-fraud-ml/notebook/mlruns/1/models/m-7a9f062208cd41c1bd16afe42e3671fb/artifacts
 flavors:
   python_function:
     data: model.ubj
@@ -14,9 +14,9 @@ flavors:
     model_format: ubj
     xgb_version: 3.2.0
 mlflow_version: 3.16.1
-model_id: m-60d985fd88d345859658640cc6e88f31
+model_id: m-7a9f062208cd41c1bd16afe42e3671fb
 model_size_bytes: 590272
-model_uuid: m-60d985fd88d345859658640cc6e88f31
+model_uuid: m-7a9f062208cd41c1bd16afe42e3671fb
 prompts: null
-run_id: 8f5c65539d954a9c9afbd34d76d3d504
-utc_time_created: '2026-10-06 00:38:15.305808'
+run_id: ecf25563d44240099890a55e7115dc81
+utc_time_created: '2026-10-11 15:16:56.906590'

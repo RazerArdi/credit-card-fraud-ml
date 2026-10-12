@@ -25,22 +25,21 @@ services:
   mlflow:
     image: python:3.10-slim
     container_name: fraud_mlflow
-    ports:
-      - "5000:5000"
     command: >
       bash -c "pip install mlflow psycopg2-binary &&
-      mlflow server
-      --backend-store-uri postgresql://mlflow_user:mlflow_password@postgres:5432/mlflow_registry
-      --serve-artifacts
-      --artifacts-destination /mlflow/artifacts
-      --default-artifact-root mlflow-artifacts:/
-      --host 0.0.0.0 --port 5000"
+              mlflow server
+              --backend-store-uri postgresql://mlflow_user:mlflow_password@postgres:5432/mlflow_registry
+              --default-artifact-root /mlflow/artifacts
+              --host 0.0.0.0
+              --port 5000
+              --serve-artifacts"
+    ports:
+      - "5000:5000"
     volumes:
       - ./mlruns:/mlflow/artifacts
     depends_on:
       - postgres
     restart: unless-stopped
-
 
   # 3. JupyterLab
   jupyter:
@@ -55,6 +54,29 @@ services:
       - .:/home/jovyan/work
     depends_on:
       - mlflow
+
+  #   # 4. FastAPI
+  # fastapi:
+  #   build: ./dashboard/Model_Serving
+  #   command: uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - ./dashboard/Model_Serving:/app
+  #   depends_on:
+  #     - mlflow
+
+  # # 4. Dashboard
+  # dash:
+  #   build: ./dashboard/Dashboard
+  #   command: python app.py
+  #   ports:
+  #     - "8050:8050"
+  #   volumes:
+  #     - ./dashboard/Dashboard:/app
+  #   depends_on:
+  #     - mlflow
+
 
 volumes:
   postgres_data:

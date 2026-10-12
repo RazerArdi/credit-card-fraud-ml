@@ -15,7 +15,7 @@ CHROMA_DB_DIR = os.path.join(BASE_DIR, "chroma_db")
 
 print("Memuat Model Embedding dan Vector Database untuk RAG...")
 # Memuat model embedding yang sama dengan saat ingestion
-embeddings = HuggingFaceEmbeddings(model="all-MiniLM-L6-v2")
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 # Menghubungkan ke ChromaDB yang sudah kita buat sebelumnya
 vector_store = Chroma(persist_directory=CHROMA_DB_DIR, embedding_function=embeddings)
