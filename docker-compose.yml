@@ -1,11 +1,11 @@
-version: '3.8'
-
 # Run with 'docker-compose up -d' to start the services in detached mode. 
 # 'docker ps' to check running containers. 'docker-compose down' to stop and remove containers, networks, and volumes.
 # 'docker-compose down' removes the containers, networks, and volumes defined in this file. Use with caution as it will delete all data in the volumes.
 # 'docker-compose stop' stops the containers without removing them, allowing you to restart them later with 'docker-compose start'.
 # 'docker-compose up -d --build' to rebuild the images and start the services in detached mode.
 # 'docker-compose up -d --force-recreate mlflow' to recreate the mlflow service without affecting other services.
+version: '3.8'
+
 services:
   # 1. PostgreSQL
   postgres:
@@ -16,6 +16,7 @@ services:
       POSTGRES_PASSWORD: mlflow_password
       POSTGRES_DB: mlflow_registry
     ports:
+      # Format yang benar: PortLaptop:PortKontainer (5432 adalah default internal)
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -25,14 +26,15 @@ services:
   mlflow:
     image: python:3.10-slim
     container_name: fraud_mlflow
+    # Gunakan tanda '>' agar YAML menggabungkan teks ini menjadi 1 baris panjang secara aman
     command: >
-      bash -c "pip install mlflow psycopg2-binary &&
-              mlflow server
-              --backend-store-uri postgresql://mlflow_user:mlflow_password@postgres:5432/mlflow_registry
-              --default-artifact-root /mlflow/artifacts
-              --host 0.0.0.0
-              --port 5000
-              --serve-artifacts"
+      sh -c "pip install mlflow psycopg2-binary &&
+      mlflow server
+      --backend-store-uri postgresql://mlflow_user:mlflow_password@postgres:5432/mlflow_registry
+      --default-artifact-root /mlflow/artifacts
+      --host 0.0.0.0
+      --port 5000
+      --serve-artifacts"
     ports:
       - "5000:5000"
     volumes:
